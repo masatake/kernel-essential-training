@@ -48,7 +48,7 @@ usage(const char *prog, FILE *fp)
 {
   fputs("Usage:\n", fp);
   fprintf(fp, "%s [--quiet] [(--length|-l) LENGTH] [(--protection|-p) PROTECTION] [(--file|-f) FILE]\n", prog);
-  fprintf(fp, "%*s [(--hugepage|-H) HugePage] [(--megabyte|-m) MB|(--gigabyte|-g) GB] [--thread|--fork]\n\n",
+  fprintf(fp, "%*s [(--hugepage|-H)] [(--megabyte|-m) MB|(--gigabyte|-g) GB] [--thread|--fork]\n\n",
 	  (int)strlen(prog), "");
   fputs("	LENGTH: the length of mapping area in GB or MB (with -m option) [default: 1GB]\n", fp);
   fputs("	PERSMISION: 4 charters [r|-][w|-][x|-][p|s] [default: r--s]\n", fp);
