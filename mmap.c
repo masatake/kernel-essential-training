@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <stdio.h>
+#include <string.h>
 #include <getopt.h>
 #include <error.h>
 #include <string.h>
@@ -40,17 +41,20 @@
 #include <errno.h>
 #include <pthread.h>
 
-#define GB (1024 * 1024 * 1024)
 #define MB (1024 * 1024)
+#define GB (MB * 1024)
+
 
 static void
 usage(const char *prog, FILE *fp)
 {
   fputs("Usage:\n", fp);
-  fprintf(fp, "%s [--quiet] [(--length|-l) LENGTH] [(--protection|-p) PROTECTION] [(--file|-f) FILE] [(--hugepage|-H) HugePage] [(--megabyte|-m) MB] [--thread|--fork]\n", prog);
-  fputs("	LENGTH: the length of mapping area in GB (default: 1)\n", fp);
-  fputs("	PERSMISION: 4 charters [r|-][w|-][x|-][p|s] (default: r--s)\n", fp);
-  fputs("	FILE: mapping file. /dev/zero implies ANONYMOUS mapping (default: /dev/zero)\n", fp);
+  fprintf(fp, "%s [--quiet] [(--length|-l) LENGTH] [(--protection|-p) PROTECTION] [(--file|-f) FILE]\n", prog);
+  fprintf(fp, "%*s [(--hugepage|-H) HugePage] [(--megabyte|-m) MB|(--gigabyte|-g) GB] [--thread|--fork]\n\n",
+	  (int)strlen(prog), "");
+  fputs("	LENGTH: the length of mapping area in GB or MB (with -m option) [default: 1GB]\n", fp);
+  fputs("	PERSMISION: 4 charters [r|-][w|-][x|-][p|s] [default: r--s]\n", fp);
+  fputs("	FILE: mapping file. /dev/zero implies ANONYMOUS mapping [default: /dev/zero]\n", fp);
 }
 
 static int
@@ -196,6 +200,7 @@ main (int argc, char **argv)
      {"thread",     no_argument,       NULL, 'T'},
      {"hugepage",   no_argument,       NULL, 'H'},
      {"megabyte",   no_argument,       NULL, 'm'},
+     {"gigabyte",   no_argument,       NULL, 'g'},
 
      {"quiet",      no_argument,       NULL, 'q'},
     };
@@ -214,7 +219,7 @@ main (int argc, char **argv)
   while (1)
     {
       int option_index = 0;
-      int c = getopt_long (argc, argv, "f:l:p:hvFTHqm",
+      int c = getopt_long (argc, argv, "f:l:p:hvFTHqmg",
 			   long_options, &option_index);
 
       if (c == -1)
@@ -263,6 +268,12 @@ main (int argc, char **argv)
         case 'm':
           unit = MB;
           length = length / 1024;
+	  break;
+	case 'g':
+	  if (unit == MB)
+	    error (1, 0, "Specify either -g or -m");
+	  unit = GB;
+	  break;
 	}
     }
 
