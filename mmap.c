@@ -22,9 +22,6 @@
  * SOFTWARE.
  */
 #define _GNU_SOURCE
-#define MAP_HUGETLB 0x40000 /* arch specific */
-#define HPFLAGS (MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB)
-
 
 #include <unistd.h>
 #include <sys/mman.h>
@@ -41,6 +38,7 @@
 #include <errno.h>
 #include <pthread.h>
 
+#define HPFLAGS (MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB)
 #define MB (1024 * 1024)
 #define GB (MB * 1024)
 
