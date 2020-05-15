@@ -22,6 +22,9 @@
  * SOFTWARE.
  */
 #define _GNU_SOURCE
+#define MAP_HUGETLB 0x40000 /* arch specific */
+#define HPFLAGS (MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB)
+
 
 #include <unistd.h>
 #include <sys/mman.h>
@@ -38,12 +41,13 @@
 #include <pthread.h>
 
 #define GB (1024 * 1024 * 1024)
+#define MB (1024 * 1024)
 
 static void
 usage(const char *prog, FILE *fp)
 {
   fputs("Usage:\n", fp);
-  fprintf(fp, "%s [--quiet] [(--length|-l) LENGTH] [(--protection|-p) PROTECTION] [(--file|-f) FILE] [--thread|--fork]\n", prog);
+  fprintf(fp, "%s [--quiet] [(--length|-l) LENGTH] [(--protection|-p) PROTECTION] [(--file|-f) FILE] [(--hugepage|-H) HugePage] [(--megabyte|-m) MB] [--thread|--fork]\n", prog);
   fputs("	LENGTH: the length of mapping area in GB (default: 1)\n", fp);
   fputs("	PERSMISION: 4 charters [r|-][w|-][x|-][p|s] (default: r--s)\n", fp);
   fputs("	FILE: mapping file. /dev/zero implies ANONYMOUS mapping (default: /dev/zero)\n", fp);
@@ -190,6 +194,8 @@ main (int argc, char **argv)
      {"verbose",    no_argument,       NULL, 'v'},
      {"fork",       no_argument,       NULL, 'F'},
      {"thread",     no_argument,       NULL, 'T'},
+     {"hugepage",   no_argument,       NULL, 'H'},
+     {"megabyte",   no_argument,       NULL, 'm'},
 
      {"quiet",      no_argument,       NULL, 'q'},
     };
@@ -202,11 +208,13 @@ main (int argc, char **argv)
   bool do_fork = false;
   bool make_thread = false;
   bool quiet = false;
+  bool hugepage = false;
+  int unit = GB;
   
   while (1)
     {
       int option_index = 0;
-      int c = getopt_long (argc, argv, "f:l:p:hvFTq",
+      int c = getopt_long (argc, argv, "f:l:p:hvFTHqm",
 			   long_options, &option_index);
 
       if (c == -1)
@@ -219,7 +227,7 @@ main (int argc, char **argv)
 	  return 0;
 	case 'l':
 	  errno = 0;
-	  length = strtoul (optarg, NULL, 10) * GB;
+	  length = strtoul (optarg, NULL, 10) * unit;
 	  if (errno != 0)
 	    error (1, errno,
 		   "Failed to convert \"%s\" to integer\n", optarg);
@@ -248,6 +256,13 @@ main (int argc, char **argv)
 	  break;
 	case 'q':
 	  quiet = true;
+          break;
+        case 'H':
+          hugepage = true;
+          break;
+        case 'm':
+          unit = MB;
+          length = length / 1024;
 	}
     }
 
@@ -256,6 +271,9 @@ main (int argc, char **argv)
   int fd = openFor (file, fflags);
   if (fd == -1)
     mflags |= MAP_ANONYMOUS;
+
+  if (hugepage)
+    mflags = HPFLAGS;
 
   if (verbose)
     {
