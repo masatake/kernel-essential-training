@@ -38,7 +38,6 @@
 #include <errno.h>
 #include <pthread.h>
 
-#define HPFLAGS (MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB)
 #define MB (1024 * 1024)
 #define GB (MB * 1024)
 
@@ -282,7 +281,7 @@ main (int argc, char **argv)
     mflags |= MAP_ANONYMOUS;
 
   if (hugepage)
-    mflags = HPFLAGS;
+    mflags |= MAP_HUGETLB;
 
   if (verbose)
     {
