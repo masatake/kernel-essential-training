@@ -47,11 +47,12 @@ usage(const char *prog, FILE *fp)
 {
   fputs("Usage:\n", fp);
   fprintf(fp, "%s [--quiet] [(--length|-l) LENGTH] [(--protection|-p) PROTECTION] [(--file|-f) FILE]\n", prog);
-  fprintf(fp, "%*s [(--hugepage|-H)] [(--megabyte|-m) MB|(--gigabyte|-g) GB] [--thread|--fork]\n\n",
+  fprintf(fp, "%*s [(--hugepage|-H) HPSIZE] [(--megabyte|-m) MB|(--gigabyte|-g) GB] [--thread|--fork]\n\n",
 	  (int)strlen(prog), "");
   fputs("	LENGTH: the length of mapping area in GB or MB (with -m option) [default: 1GB]\n", fp);
   fputs("	PERSMISION: 4 charters [r|-][w|-][x|-][p|s] [default: r--s]\n", fp);
   fputs("	FILE: mapping file. /dev/zero implies ANONYMOUS mapping [default: /dev/zero]\n", fp);
+  fputs("	HPSIZE: the size of huge page. Currently only \"default\" is acceptable.\n", fp);
 }
 
 static int
@@ -210,13 +211,13 @@ main (int argc, char **argv)
   bool do_fork = false;
   bool make_thread = false;
   bool quiet = false;
-  bool hugepage = false;
+  const char* hugepage = NULL;
   int unit = GB;
   
   while (1)
     {
       int option_index = 0;
-      int c = getopt_long (argc, argv, "f:l:p:hvFTHqmg",
+      int c = getopt_long (argc, argv, "f:l:p:hvFTH:qmg",
 			   long_options, &option_index);
 
       if (c == -1)
@@ -260,7 +261,10 @@ main (int argc, char **argv)
 	  quiet = true;
           break;
         case 'H':
-          hugepage = true;
+          hugepage = optarg;
+	  if (strcmp (hugepage, "default"))
+	    error (1, 0,
+		   "Unknown hugepage size: %s\n", hugepage);
           break;
         case 'm':
           unit = MB;
