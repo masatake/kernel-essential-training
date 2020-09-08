@@ -1,4 +1,4 @@
-/* Just after froking, the parent or its child, 
+/* Just after forking, the parent or its child,
  * which process gets a cpu first? */
 #include <sys/types.h>
 #include <unistd.h>
