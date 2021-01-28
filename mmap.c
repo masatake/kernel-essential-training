@@ -1,7 +1,7 @@
-/* 
+/*
  * Copyright 2019 Red Hat, Inc.
  * Copyright 2019 Masatake YAMATO
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -46,13 +46,25 @@ static void
 usage(const char *prog, FILE *fp)
 {
   fputs("Usage:\n", fp);
-  fprintf(fp, "%s [--quiet] [(--length|-l) LENGTH] [(--protection|-p) PROTECTION] [(--file|-f) FILE]\n", prog);
-  fprintf(fp, "%*s [(--hugepage|-H) HPSIZE] [(--megabyte|-m) MB|(--gigabyte|-g) GB] [--thread|--fork]\n\n",
+  fprintf(fp, "%s [--quiet] [(--length|-l) LENGTH] [(--protection|-p) PROTECTION] [(--file|-f) FILE]\\\n", prog);
+  fprintf(fp, "%*s [(--hugepage|-H) HPSIZE] [(--megabyte|-m) MB|(--gigabyte|-g) GB]\\\n",
 	  (int)strlen(prog), "");
+  fprintf(fp, "%*s [--thread|--fork] [(-t|--touch) TOUCH]\n\n", (int)strlen(prog), "");
   fputs("	LENGTH: the length of mapping area in GB or MB (with -m option) [default: 1GB]\n", fp);
   fputs("	PERSMISION: 4 charters [r|-][w|-][x|-][p|s] [default: r--s]\n", fp);
   fputs("	FILE: mapping file. /dev/zero implies ANONYMOUS mapping [default: /dev/zero]\n", fp);
   fputs("	HPSIZE: the size of huge page. Currently only \"default\" is acceptable.\n", fp);
+  fputs("	TOUCH: how frequently writing to the pages when w is in PERSMISION:\n", fp);
+  fputs("	       \"infinite\", \"once\", or \"never\". [default: infinite]\n", fp);
+  fputs("Examples:\n", fp);
+  fputs("	# anonymouos private mapping, reading the area\n", fp);
+  fprintf(fp, "	%s --length 1 --protection r--p", prog);
+  fputs("	# anonymouos private mapping, writing the area\n", fp);
+  fprintf(fp, "	%s --length 1 --protection -w-p", prog);
+  fputs("	# anonymouos shared mapping, reading the area\n", fp);
+  fprintf(fp, "	%s --length 1 --protection r--s", prog);
+  fputs("	# anonymouos shared mapping, writing the area\n", fp);
+  fprintf(fp, "	%s --length 1 --protection -w-s", prog);
 }
 
 static int
@@ -106,7 +118,7 @@ static int
 decode_mflag(const char *str)
 {
   int mflags = 0;
-  
+
   if (! (str[0] != '\0' && str[1] != '\0' && str[2] != '\0'))
     error (1, 0,
 	   "Too short (< 4) protection string: %lu\n",
@@ -153,19 +165,34 @@ openFor (const char *file, int flags)
   return fd;
 }
 
+enum touch_action
+{
+  TOUCH_INFINITE,
+  TOUCH_ONCE,
+  TOUCH_NEVER,
+};
+
 struct runData {
   char *addr;
   int prot;
   size_t length;
   int stride;
+  enum touch_action action;
 };
 
 static char
-run (char *addr, int prot, size_t length, int stride)
+run (char *addr, int prot, size_t length, int stride, enum touch_action action)
 {
+  bool touched = false;
   volatile char c;
   for (int i = 0; i < (int) (length / stride); i++)
     {
+      if (action == TOUCH_NEVER)
+	continue;
+      else if (action == TOUCH_ONCE && touched)
+	continue;
+
+      touched = true;
       char *p = addr + (i * stride);
       if (prot & PROT_WRITE)
 	*p = '1';
@@ -180,7 +207,7 @@ thread_run (void * arg)
 {
   struct runData *data = arg;
   while (1)
-    run (data->addr, data->prot, data->length, data->stride);
+    run (data->addr, data->prot, data->length, data->stride, data->action);
   return NULL;
 }
 
@@ -214,11 +241,12 @@ main (int argc, char **argv)
   bool quiet = false;
   const char* hugepage = NULL;
   int unit = GB;
-  
+  enum touch_action action = TOUCH_INFINITE;
+
   while (1)
     {
       int option_index = 0;
-      int c = getopt_long (argc, argv, "f:l:p:hvFTH:qmg",
+      int c = getopt_long (argc, argv, "f:l:p:hvFTH:qmgt:",
 			   long_options, &option_index);
 
       if (c == -1)
@@ -253,23 +281,23 @@ main (int argc, char **argv)
 	  break;
 	case 'T':
 	  make_thread = true;
-	  break;	  
+	  break;
 	case '?':
 	  error (1, 0,
 		 "Unknown option: %s\n", argv[optind]);
 	  break;
 	case 'q':
 	  quiet = true;
-          break;
-        case 'H':
-          hugepage = optarg;
+	  break;
+	case 'H':
+	  hugepage = optarg;
 	  if (strcmp (hugepage, "default"))
 	    error (1, 0,
 		   "Unknown hugepage size: %s\n", hugepage);
-          break;
-        case 'm':
-          unit = MB;
-          length = length / 1024;
+	  break;
+	case 'm':
+	  unit = MB;
+	  length = length / 1024;
 	  break;
 	case 'g':
 	  if (unit == MB)
@@ -280,7 +308,7 @@ main (int argc, char **argv)
     }
 
   int fflags  = prot2fflags(prot);
-  
+
   int fd = openFor (file, fflags);
   if (fd == -1)
     mflags |= MAP_ANONYMOUS;
@@ -300,13 +328,14 @@ main (int argc, char **argv)
   if (addr == MAP_FAILED)
     error (1, errno,
 	   "Failed in mmap\n");
-  
+
   struct runData d =
     {
      .addr = addr,
      .prot = prot,
      .length = length,
      .stride = 4096,
+     .action = action,
     };
 
   if (!quiet)
