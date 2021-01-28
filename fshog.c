@@ -47,7 +47,7 @@ main (int argc, char **argv)
 	}
     }
 
-  int fd = open(fname, O_WRONLY|O_CREAT|O_TRUNC);
+  int fd = open(fname, O_WRONLY|O_CREAT);
   if (fd < 0)
     error(1, errno, "failed to open: %s\n", fname);
 
@@ -55,7 +55,7 @@ main (int argc, char **argv)
     error(1, errno, "failed to unlink: %s\n", fname);
 
   {
-    if (open(fname, O_WRONLY|O_CREAT|O_TRUNC) < 0)
+    if (open(fname, O_WRONLY|O_CREAT) < 0)
       error(1, errno, "failed to create: %s\n", fname);
   }
 
