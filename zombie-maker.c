@@ -24,7 +24,7 @@ main (void)
   fprintf(stderr, "press [enter] for sending them to haven");
   getchar ();
 
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < n; i++)
     wait (NULL);	
 
   while (1);
