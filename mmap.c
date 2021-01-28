@@ -179,7 +179,8 @@ static void*
 thread_run (void * arg)
 {
   struct runData *data = arg;
-  run (data->addr, data->prot, data->length, data->stride);
+  while (1)
+    run (data->addr, data->prot, data->length, data->stride);
   return NULL;
 }
 
@@ -318,20 +319,23 @@ main (int argc, char **argv)
 
   if (do_fork)
     {
-      if (fork () < 0)
+      pid_t t = fork ();
+      if (t < 0)
 	error (1, errno, "Failed in fork");
+      else if (t == 0)
+	thread_run (&d);
+      pause ();
     }
-
-  if (make_thread)
+  else if (make_thread)
     {
       pthread_t thr;
       int e = pthread_create (&thr, NULL, thread_run, &d);
       if (errno != 0)
 	error (1, e, "Failed in pthread_create");
+      pause ();
     }
-
-  while (1)
-    run (addr, prot, length, 4096);
+  else
+    thread_run (&d);
 
   return 0;
 }
