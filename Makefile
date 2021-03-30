@@ -24,5 +24,6 @@ PROGRAMS=					\
 all: $(PROGRAMS)
 	$(MAKE) -C mmap
 	$(MAKE) -C kvm
+	$(MAKE) -C container
 	(cd build-strace; bash rhel8.sh)
 	(cd build-lsof; bash rhel8.sh)
