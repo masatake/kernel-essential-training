@@ -1,3 +1,6 @@
+/*
+ * making pid namespace step by step
+ */
 #define _GNU_SOURCE
 #include <sched.h>
 #include <error.h>
