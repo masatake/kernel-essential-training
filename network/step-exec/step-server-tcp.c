@@ -56,8 +56,9 @@ main()
  if (listen(server, 2) < 0)
    pexit("listen");
 
+ int c;
  next:
- int c = prompt("crash[Y/n]");
+ c = prompt("crash[Y/n]");
  switch (c) {
  case 'Y':
    exit (0);
