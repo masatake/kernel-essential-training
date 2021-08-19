@@ -1,0 +1,9 @@
+pollx
+spin
+*.o
+*.png
+*.hist
+*.hist.*
+*.cmd
+*.data
+*~
