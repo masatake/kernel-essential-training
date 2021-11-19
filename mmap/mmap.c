@@ -58,13 +58,13 @@ usage(const char *prog, FILE *fp)
   fputs("	       \"infinite\", \"once\", or \"never\". [default: infinite]\n", fp);
   fputs("Examples:\n", fp);
   fputs("	# anonymouos private mapping, reading the area\n", fp);
-  fprintf(fp, "	%s --length 1 --protection r--p", prog);
+  fprintf(fp, "	%s --length 1 --protection r--p\n", prog);
   fputs("	# anonymouos private mapping, writing the area\n", fp);
-  fprintf(fp, "	%s --length 1 --protection -w-p", prog);
+  fprintf(fp, "	%s --length 1 --protection -w-p\n", prog);
   fputs("	# anonymouos shared mapping, reading the area\n", fp);
-  fprintf(fp, "	%s --length 1 --protection r--s", prog);
+  fprintf(fp, "	%s --length 1 --protection r--s\n", prog);
   fputs("	# anonymouos shared mapping, writing the area\n", fp);
-  fprintf(fp, "	%s --length 1 --protection -w-s", prog);
+  fprintf(fp, "	%s --length 1 --protection -w-s\n", prog);
 }
 
 static int
