@@ -219,6 +219,7 @@ main (int argc, char **argv)
      {"file",       required_argument, NULL, 'f'},
      {"length",     required_argument, NULL, 'l'},
      {"protection", required_argument, NULL, 'p'},
+     {"touch",      required_argument, NULL, 't'},
 
      {"help",       no_argument,       NULL, 'h'},
      {"verbose",    no_argument,       NULL, 'v'},
@@ -303,6 +304,16 @@ main (int argc, char **argv)
 	  if (unit == MB)
 	    error (1, 0, "Specify either -g or -m");
 	  unit = GB;
+	  break;
+	case 't':
+	  if (strcmp (optarg, "infinite") == 0)
+	    action = TOUCH_INFINITE;
+	  else if (strcmp (optarg, "once") == 0)
+	    action = TOUCH_ONCE;
+	  else if (strcmp (optarg, "never") == 0)
+	    action = TOUCH_NEVER;
+	  else
+	    error (1, 0, "Unknown action: %s", optarg);
 	  break;
 	}
     }
