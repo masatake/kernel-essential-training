@@ -1,0 +1,39 @@
+#!/bin/bash
+
+print_usage()
+{
+    cat<<EOF
+Usage:
+	$0 function
+	$0 module function
+EOF
+    exit $1
+}
+
+case "$1" in
+    -h|--help)
+	print_usage 0
+esac
+
+STAP_CMDLINE="stap --all-modules -"
+if [[ "$#" == 2 ]]; then
+   ${STAP_CMDLINE} <<EOF
+probe module("$1").function("$2")
+{
+	printf("%s,%s[%d]:\n", tz_ctime(gettimeofday_s()), execname(), pid())
+	print_backtrace())
+}
+EOF
+
+elif [[ "$#" == 1 ]]; then
+   ${STAP_CMDLINE} <<EOF
+probe kernel.function("$1")
+{
+	printf("%s,%s[%d]:\n", tz_ctime(gettimeofday_s()), execname(), pid())
+	print_backtrace()
+}
+EOF
+
+else
+    print_usage 1 1>&2
+fi
