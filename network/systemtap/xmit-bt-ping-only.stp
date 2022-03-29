@@ -1,0 +1,11 @@
+# -*- systemtap -*-
+
+probe kernel.function("dev_queue_xmit")
+{
+  if (execname() != "ping") {
+    next
+  }
+  
+  printf("%s,%s[%d]:\n", tz_ctime(gettimeofday_s()), execname(), pid())
+  print_backtrace()
+}
