@@ -21,7 +21,7 @@ if [[ "$#" == 2 ]]; then
 probe module("$1").function("$2")
 {
 	printf("%s,%s[%d]:\n", tz_ctime(gettimeofday_s()), execname(), pid())
-	print_backtrace())
+	print_backtrace()
 }
 EOF
 
