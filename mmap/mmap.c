@@ -57,14 +57,16 @@ usage(const char *prog, FILE *fp)
   fputs("	TOUCH: how frequently writing to the pages when w is in PERSMISION:\n", fp);
   fputs("	       \"infinite\", \"once\", or \"never\". [default: infinite]\n", fp);
   fputs("Examples:\n", fp);
-  fputs("	# anonymouos private mapping, reading the area\n", fp);
+  fputs("	# anonymouos private mapping, reading on the area\n", fp);
   fprintf(fp, "	%s --length 1 --protection r--p\n", prog);
-  fputs("	# anonymouos private mapping, writing the area\n", fp);
+  fputs("	# anonymouos private mapping, writing on the area\n", fp);
   fprintf(fp, "	%s --length 1 --protection -w-p\n", prog);
-  fputs("	# anonymouos shared mapping, reading the area\n", fp);
+  fputs("	# anonymouos shared mapping, reading on the area\n", fp);
   fprintf(fp, "	%s --length 1 --protection r--s\n", prog);
-  fputs("	# anonymouos shared mapping, writing the area\n", fp);
+  fputs("	# anonymouos shared mapping, writing on the area\n", fp);
   fprintf(fp, "	%s --length 1 --protection -w-s\n", prog);
+  fputs("	# anonymouos private mapping, writing nothing on the area\n", fp);
+  fprintf(fp, "	%s --length 1 --protection -w-p -t never\n", prog);
 }
 
 static int
