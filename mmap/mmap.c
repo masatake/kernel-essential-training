@@ -47,7 +47,7 @@ usage(const char *prog, FILE *fp)
 {
   fputs("Usage:\n", fp);
   fprintf(fp, "%s [--quiet] [(--length|-l) LENGTH] [(--protection|-p) PROTECTION] [(--file|-f) FILE]\\\n", prog);
-  fprintf(fp, "%*s [(--hugepage|-H) HPSIZE] [(--megabyte|-m) MB|(--gigabyte|-g) GB]\\\n",
+  fprintf(fp, "%*s [(--hugepage|-H) HPSIZE] [(--megabyte|-m)|(--gigabyte|-g)]\\\n",
 	  (int)strlen(prog), "");
   fprintf(fp, "%*s [--thread|--fork] [(-t|--touch) TOUCH]\n\n", (int)strlen(prog), "");
   fputs("	LENGTH: the length of mapping area in GB or MB (with -m option) [default: 1GB]\n", fp);
