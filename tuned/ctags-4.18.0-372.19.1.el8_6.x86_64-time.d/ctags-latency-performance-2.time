@@ -1,0 +1,4 @@
+48.77user 5.04system 0:29.60elapsed 181%CPU (0avgtext+0avgdata 209504maxresident)k
+8408inputs+380312outputs (4major+1684368minor)pagefaults 0swaps
+50.14user 4.87system 0:30.31elapsed 181%CPU (0avgtext+0avgdata 208136maxresident)k
+64inputs+383040outputs (0major+1663667minor)pagefaults 0swaps
