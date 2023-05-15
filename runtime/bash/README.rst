@@ -5,12 +5,11 @@
         yum install strace
 
 
-Do nothing: empty.go
+Do nothing: empty.c
 ====================================================
 ::
 
-        
-	./empty.py; echo $?
-        strace -y -f ./empty.py
-        strace -y -k -f ./empty.py
-	strace -c -f ./empty.py
+	./empty.sh; echo $?	
+        strace -y -f ./empty.sh
+        strace -y -k -f ./empty.sh
+	strace -c -f ./empty.sh
