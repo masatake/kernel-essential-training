@@ -1,0 +1,10 @@
+#!/bin/bash
+for x in /proc/[0-9]*; do
+    a=$(cat $x/oom_adj)
+    if [[ "$a" == 0 ]]; then
+	continue
+    fi
+
+    exe=$(readlink $x/exe)
+    printf "%d (%s:%d)\n" "$a" "$exe" "$(basename $x)" 
+done | sort -n
