@@ -10,7 +10,7 @@ Do nothing: empty.c
 ====================================================
 ::
 
-	javac
+	javac empty.java
         strace -y -f java empty
         strace -y -k -f java empty
 	strace -c -f java empty
