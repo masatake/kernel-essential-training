@@ -50,23 +50,28 @@ usage(const char *prog, FILE *fp)
   fprintf(fp, "%*s [(--hugepage|-H) HPSIZE] [(--megabyte|-m)|(--gigabyte|-g)]\\\n",
 	  (int)strlen(prog), "");
   fprintf(fp, "%*s [--thread|--fork] [(-t|--touch) TOUCH]\n\n", (int)strlen(prog), "");
-  fputs("	LENGTH: the length of mapping area in GB or MB (with -m option) [default: 1GB]\n", fp);
+  fputs("	LENGTH: the length of mapping area in GiB or MiB (with -m option) [default: 1GiB]\n", fp);
   fputs("	PERSMISION: 4 charters [r|-][w|-][x|-][p|s] [default: r--s]\n", fp);
   fputs("	FILE: mapping file. /dev/zero implies ANONYMOUS mapping [default: /dev/zero]\n", fp);
   fputs("	HPSIZE: the size of huge page. Currently only \"default\" is acceptable.\n", fp);
   fputs("	TOUCH: how frequently writing to the pages when w is in PERSMISION:\n", fp);
   fputs("	       \"infinite\", \"once\", or \"never\". [default: infinite]\n", fp);
   fputs("Examples:\n", fp);
-  fputs("	# anonymouos private mapping, reading on the area\n", fp);
+  fputs("	# anonymouos private mapping, reading the area\n", fp);
   fprintf(fp, "	%s --length 1 --protection r--p\n", prog);
-  fputs("	# anonymouos private mapping, writing on the area\n", fp);
+  fputs("\n", fp);
+  fputs("	# anonymouos private mapping, writing the area\n", fp);
   fprintf(fp, "	%s --length 1 --protection -w-p\n", prog);
-  fputs("	# anonymouos shared mapping, reading on the area\n", fp);
+  fputs("\n", fp);
+  fputs("	# anonymouos shared mapping, reading the area\n", fp);
   fprintf(fp, "	%s --length 1 --protection r--s\n", prog);
-  fputs("	# anonymouos shared mapping, writing on the area\n", fp);
+  fputs("\n", fp);
+  fputs("	# anonymouos shared mapping, writing the area\n", fp);
   fprintf(fp, "	%s --length 1 --protection -w-s\n", prog);
-  fputs("	# anonymouos private mapping, writing nothing on the area\n", fp);
+  fputs("\n", fp);
+  fputs("	# anonymouos private mapping, do nothing the area\n", fp);
   fprintf(fp, "	%s --length 1 --protection -w-p -t never\n", prog);
+  fputs("\n", fp);
 }
 
 static int
