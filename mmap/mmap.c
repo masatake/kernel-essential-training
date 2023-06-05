@@ -347,7 +347,7 @@ main (int argc, char **argv)
      .addr = addr,
      .prot = prot,
      .length = length,
-     .stride = 4096,
+     .stride = getpagesize(),
      .action = action,
     };
 
