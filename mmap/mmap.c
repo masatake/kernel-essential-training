@@ -55,7 +55,11 @@ usage(const char *prog, FILE *fp)
   fputs("	FILE: mapping file. /dev/zero implies ANONYMOUS mapping [default: /dev/zero]\n", fp);
   fputs("	HPSIZE: the size of huge page. Currently only \"default\" is acceptable.\n", fp);
   fputs("	TOUCH: how frequently writing to the pages when w is in PERSMISION:\n", fp);
-  fputs("	       \"infinite\", \"once\", or \"never\". [default: infinite]\n", fp);
+  fputs("	       \"infinite\", \"once\", \"dontneed\", "
+#ifdef MADV_PAGEOUT
+	"\"pageout\", "
+#endif
+	"or \"never\". [default: infinite]\n", fp);
   fputs("Examples:\n", fp);
   fputs("	# anonymouos private mapping, reading the area\n", fp);
   fprintf(fp, "	%s --length 1 --protection r--p\n", prog);
@@ -76,6 +80,12 @@ usage(const char *prog, FILE *fp)
   fprintf(fp, "	dd if=/dev/zero of=./TEST bs=1048567 count=100\n");
   fprintf(fp, "	%s --length 100 -m --protection rw-s -t once -f TEST\n", prog);
   fprintf(fp, "	rm ./TEST\n");
+#ifdef MADV_PAGEOUT
+  fputs("	# make a 100MiB file, file private mapping, writing the area only once with marking MADV_PAGEOUT\n", fp);
+  fprintf(fp, "	dd if=/dev/zero of=./TEST bs=1048567 count=100\n");
+  fprintf(fp, "	%s --length 100 -m --protection rw-p -t pageout -f TEST\n", prog);
+  fprintf(fp, "	rm ./TEST\n");
+#endif
   fputs("\n", fp);
 }
 
@@ -182,6 +192,10 @@ enum touch_action
   TOUCH_INFINITE,
   TOUCH_ONCE,
   TOUCH_NEVER,
+  TOUCH_DONTNEED,
+#ifdef MADV_PAGEOUT
+  TOUCH_PAGEOUT,
+#endif
 };
 
 struct runData {
@@ -216,11 +230,26 @@ thread_run (void * arg)
     {
       if (data->action == TOUCH_NEVER)
 	continue;
-      else if (data->action == TOUCH_ONCE && touched)
+      else if ((data->action == TOUCH_ONCE
+		|| data->action == TOUCH_DONTNEED
+#ifdef MADV_PAGEOUT
+		|| data->action == TOUCH_PAGEOUT
+#endif
+		)
+	       && touched)
 	continue;
 
       run (data->addr, data->prot, data->length, data->stride);
       touched = true;
+
+      if (data->action == TOUCH_DONTNEED)
+	if (madvise(data->addr, data->length, MADV_DONTNEED) < 0)
+	  error (1, errno, "Failed in madvise\n");
+#ifdef MADV_PAGEOUT
+	    if (data->action == TOUCH_PAGEOUT)
+	if (madvise(data->addr, data->length, MADV_PAGEOUT) < 0)
+	  error (1, errno, "Failed in madvise\n");
+#endif
     }
   return NULL;
 }
@@ -326,6 +355,12 @@ main (int argc, char **argv)
 	    action = TOUCH_ONCE;
 	  else if (strcmp (optarg, "never") == 0)
 	    action = TOUCH_NEVER;
+	  else if (strcmp (optarg, "dontneed") == 0)
+	    action = TOUCH_DONTNEED;
+#ifdef MADV_PAGEOUT
+	  else if (strcmp (optarg, "pageout") == 0)
+	    action = TOUCH_PAGEOUT;
+#endif
 	  else
 	    error (1, 0, "Unknown action: %s", optarg);
 	  break;
