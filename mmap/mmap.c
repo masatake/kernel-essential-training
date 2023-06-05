@@ -193,18 +193,11 @@ struct runData {
 };
 
 static char
-run (char *addr, int prot, size_t length, int stride, enum touch_action action)
+run (char *addr, int prot, size_t length, int stride)
 {
-  bool touched = false;
   volatile char c;
   for (int i = 0; i < (int) (length / stride); i++)
     {
-      if (action == TOUCH_NEVER)
-	continue;
-      else if (action == TOUCH_ONCE && touched)
-	continue;
-
-      touched = true;
       char *p = addr + (i * stride);
       if (prot & PROT_WRITE)
 	*p = '1';
@@ -217,9 +210,18 @@ run (char *addr, int prot, size_t length, int stride, enum touch_action action)
 static void*
 thread_run (void * arg)
 {
+  bool touched = false;
   struct runData *data = arg;
   while (1)
-    run (data->addr, data->prot, data->length, data->stride, data->action);
+    {
+      if (data->action == TOUCH_NEVER)
+	continue;
+      else if (data->action == TOUCH_ONCE && touched)
+	continue;
+
+      run (data->addr, data->prot, data->length, data->stride);
+      touched = true;
+    }
   return NULL;
 }
 
