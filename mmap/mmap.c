@@ -72,6 +72,11 @@ usage(const char *prog, FILE *fp)
   fputs("	# anonymouos private mapping, do nothing the area\n", fp);
   fprintf(fp, "	%s --length 1 --protection -w-p -t never\n", prog);
   fputs("\n", fp);
+  fputs("	# make a 100MiB file, file shared mapping, writing the area only once\n", fp);
+  fprintf(fp, "	dd if=/dev/zero of=./TEST bs=1048567 count=100\n");
+  fprintf(fp, "	%s --length 100 -m --protection rw-s -t once -f TEST\n", prog);
+  fprintf(fp, "	rm ./TEST\n");
+  fputs("\n", fp);
 }
 
 static int
