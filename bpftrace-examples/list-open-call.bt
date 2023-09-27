@@ -1,0 +1,21 @@
+#!/usr/bin/bpftrace
+
+BEGIN
+{
+	if ($# > 0) {
+		printf("Hello, %s\n", str($1));
+	}
+}
+
+tracepoint:syscalls:sys_enter_open,
+tracepoint:syscalls:sys_enter_openat
+{
+	time("%H:%M:%S ");
+	printf("[%d] %s is opened (reporeted in %s)\n",
+		     @total++, str(args->filename), probe);
+}	
+
+END
+{
+	printf("Bye\n");
+}
