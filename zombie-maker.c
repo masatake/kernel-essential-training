@@ -21,7 +21,7 @@ main (void)
 	exit (i);
     }
   fprintf(stderr, "done\n");
-  fprintf(stderr, "press [enter] for sending them to haven");
+  fprintf(stderr, "press [enter] for sending them to Heaven");
   getchar ();
 
   for (int i = 0; i < n; i++)
