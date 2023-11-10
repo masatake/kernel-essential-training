@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/file.h>
 
 void
 usage(const char* name, FILE *fp, int status)
