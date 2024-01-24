@@ -38,7 +38,7 @@ prompt(char* next)
   last_syscall = next;
   
   c = getchar();
-  if (c == EOF)
+  if (c == EOF || c == 'q')
     exit(0);
   return c;
 }
