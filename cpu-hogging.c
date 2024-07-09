@@ -19,7 +19,7 @@
    Phone: (0598)29-1122(代)  Fax: (0598)29-1014
    ============================================================ */
 
-/* gcc cpu-hog.c
+/* gcc cpu-hogging.c
   strace -C -r -T -t ./a.out */
 
 int tarai(int x, int y, int z)
