@@ -11,6 +11,7 @@ fi
 
 count=100000
 target_cpu=2
+pri=90
 
 base=$1
 output=${base}.data
@@ -21,7 +22,7 @@ cores=1
 
 rm -f "${output}" "${histogram}" "${plotout}" "${plotcmd}"
 
-cyclictest -l${count} -a "${target_cpu}" -t 1 --policy=fifo -p90 -m -i200 -h400 -q > "${output}"
+cyclictest -l${count} -a "${target_cpu}" -t 1 --policy=fifo -p"${pri}" -m -i200 -h400 -q > "${output}"
 max=`grep "Max Latencies" ${output} | tr " " "\n" | sort -n | tail -1 | sed s/^0*//`
 grep -v -e "^#" -e "^$" ${output} | tr " " "\t" > ${histogram}
 
