@@ -10,7 +10,7 @@ if [ -z "$1" ]; then
 fi
 
 count=100000
-target_cpu=3
+target_cpu=2
 
 base=$1
 output=${base}.data

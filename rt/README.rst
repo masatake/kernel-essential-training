@@ -58,7 +58,7 @@ Normal kernel
 
       # bash -x ./all-normal.sh
 
-   This script runs the cyclictest at cpu #3 with
+   This script runs the cyclictest at cpu #2 with
    different conditions
 
       no extra load,
@@ -72,7 +72,7 @@ Normal kernel
       intr  process * 2, or
       intr  process * 3.
 
-   spin, pollx, and intr processes are also pined at cpu #3.
+   spin, pollx, and intr processes are also pined at cpu #2.
 
 5. View the histogram for the results of each condition
 
