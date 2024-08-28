@@ -66,10 +66,13 @@ Normal kernel
       spin  process * 2,
       spin  process * 3,
       pollx process * 1,
-      pollx process * 2, or
+      pollx process * 2,
       pollx process * 3.
+      intr  process * 1,
+      intr  process * 2, or
+      intr  process * 3.
 
-   spin and pollx processes are alos pined at cpu #3.
+   spin, pollx, and intr processes are also pined at cpu #3.
 
 5. View the histogram for the results of each condition
 
@@ -81,6 +84,8 @@ Normal kernel
    You will see the pollx processes have impact on
    the latency.
 
+   You will see the intr processes have impact on
+   the latency.
 
 RT kernel
 ..............................................
