@@ -12,14 +12,14 @@ Requirements
 
   - gcc
   - make
-  - cyclictest (rt-tests package)
+  - cyclictest (realtime-tests package)
   - tasktset   (util-linux package)
-  - gnuplot    (gnuplot package)
+  - gnuplot    (gnuplot package (epel9))
 
 * Assumed kernels
 
-  RHEL8 kernel     (normal)
-  RHEL8 kernel-rt  (rt)
+  RHEL9 kernel     (normal)
+  RHEL9 kernel-rt  (rt)
 
 
 C programs in this directory
@@ -33,6 +33,11 @@ pollx
 	Hogging CPU in kernel mode by calling poll(2) with a large fd array
 	This reduces chances to call schedule().
 
+intr
+
+	Generating interrupts repeatedly by reading bytes from a block device
+	with O_DIRECT. See DEFAULT_BDEV in intr.c to the block device.
+
 Usage
 ----------------------------------------------
 
@@ -43,10 +48,11 @@ Normal kernel
 2. login
 3. adjust rt_runtime_us:
 
-      # echo 950000 > /sys/fs/cgroup/cpu/rescue.slice/cpu.rt_runtime_us
+      # echo 950000 > /proc/sys/kernel/sched_rt_runtime_us
 
    See https://stackoverflow.com/questions/56904831/changing-thread-real-time-scheduling-policy-fails-config-rt-group-sched-y
-   aobut the background
+   and https://access.redhat.com/solutions/7059424
+   about the background
 
 4. Run all-normal.sh
 
