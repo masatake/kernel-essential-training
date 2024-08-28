@@ -1,4 +1,4 @@
-##!/bin/sh
+#!/bin/sh
 
 if ! [ -x pollx ]; then
     echo "no pollx command found" 1>&2
