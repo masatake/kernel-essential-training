@@ -1,0 +1,10 @@
+#!/usr/bin/bpftrace
+
+/* bpftrace -lv 'uprobe:/bin/bash:*'
+   でプローブ箇所を探す。 */
+
+uprobe:/usr/bin/bash:cd_builtin
+{
+	time("%H:%M:%S ");
+	printf("[pid: %d] cd\n", pid)
+}
