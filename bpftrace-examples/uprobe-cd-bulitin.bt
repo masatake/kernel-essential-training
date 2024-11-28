@@ -1,6 +1,6 @@
 #!/usr/bin/bpftrace
 
-/* bpftrace -lv 'uprobe:/bin/bash:*'
+/* bpftrace -lv 'uprobe:対象のプログラムファイル:*'
    でプローブ箇所を探す。 */
 
 uprobe:/usr/bin/bash:cd_builtin
