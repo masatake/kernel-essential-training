@@ -1,0 +1,23 @@
+#!/usr/bin/bpftrace
+
+tracepoint:syscalls:sys_enter_open,
+tracepoint:syscalls:sys_enter_openat
+{
+	$fname = str(args->filename);
+
+	if ((args->flags & 03) == 00) {
+		$RW = "r_";
+	} else if ((args->flags & 03) == 01) {
+		$RW = "_w";
+	} else if ((args->flags & 03) == 02) {
+		$RW = "rw";
+	}
+
+	if (($# == 2 && str($1) == $RW && str($2) == $fname)
+		|| ($# == 1 && str($1) == $fname)
+		|| $# == 0) {
+		time("%H:%M:%S ");
+		printf("[%d] <%s> %s is opened by pid:%d,comm:%s (reporeted in %s)\n",
+			@total++, $RW, $fname, pid, comm, probe);
+	}
+}

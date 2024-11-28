@@ -1,0 +1,24 @@
+#!/usr/bin/bpftrace
+
+i:ms:100 {
+  @x = sum(5);
+  @y = sum(7);
+  @z = sum(5);
+}
+
+i:s:1 {
+  @B = count();
+}
+
+i:s:2 {
+  @A = count();
+
+  print(@x);
+  print(@y);
+  print(@z);
+  clear(@z);
+
+  print(@A);
+  print(@B);
+
+}

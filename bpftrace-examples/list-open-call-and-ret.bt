@@ -1,0 +1,15 @@
+#!/usr/bin/bpftrace
+
+tracepoint:syscalls:sys_enter_open,
+tracepoint:syscalls:sys_enter_openat
+{
+	time("%H:%M:%S ");
+	printf("[%d] %s is opened (reporeted in %s)...",
+		     @total++, str(args->filename), probe);
+}	
+
+tracepoint:syscalls:sys_exit_open,
+tracepoint:syscalls:sys_exit_openat
+{
+	printf("%d\n", args.ret);
+}
