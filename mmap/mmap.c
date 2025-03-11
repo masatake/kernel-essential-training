@@ -202,15 +202,15 @@ struct runData {
   char *addr;
   int prot;
   size_t length;
-  int stride;
+  unsigned int stride;
   enum touch_action action;
 };
 
 static char
-run (char *addr, int prot, size_t length, int stride)
+run (char *addr, int prot, size_t length, unsigned int stride)
 {
   volatile char c;
-  for (int i = 0; i < (int) (length / stride); i++)
+  for (unsigned int i = 0; i < (length / stride); i++)
     {
       char *p = addr + (i * stride);
       if (prot & PROT_WRITE)
