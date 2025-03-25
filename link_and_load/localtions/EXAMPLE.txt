@@ -1,0 +1,47 @@
+$ setarch -R ./locations 
+pid: 1960747
+[X] main: 0x4014da
+[X] argc: 0x7fffffffdeec
+[X] env(HOME): 0x7fffffffec04
+[X] ptr_malloc_small: 0x4056b0
+[X] ptr_malloc_large: 0x7ffff79a7010
+[X] var_funstatic_main: 0x4040dc
+[X] var_funstatic_init_main: 0x40408c
+[X] var_funlocal_main: 0x7fffffffdf04
+[X] var_funlocal_main_1: 0x7fffffffdf00
+[X] const_funstatic_init_main: 0x402850
+[X] const_funlocal_init_main: 0x7fffffffdefc
+[X] func_global_a: 0x401212
+[X] func_static_a: 0x401206
+[X] var_global_a: 0x4040cc
+[X] var_global_init_a: 0x404080
+[X] var_static_a: 0x4040d0
+[X] var_static_init_a: 0x40407c
+[X] const_global_init_a: 0x402524
+[X] const_static_init_a: 0x402520
+
+1960747:   ./locations
+0000000000400000      4K r---- locations ()
+0000000000401000      4K r-x-- locations (main, func_global_a,func_static_a)
+0000000000402000      4K r---- locations (const_funstatic_init_main,const_global_init_a,const_static_init_a)
+0000000000403000      4K r---- locations
+0000000000404000      4K rw--- locations (var_funstatic_main,var_funstatic_init_main,var_global_a,var_global_init_a,var_static_a,var_static_init_a)
+0000000000405000    132K rw---   [ heap ] (ptr_malloc_small)
+00007ffff79a7000   4112K rw---   [ anon ] (ptr_malloc_large)
+00007ffff7dab000      4K r---- libc.so.6
+00007ffff7dac000   1468K r-x-- libc.so.6
+00007ffff7f1b000    468K r---- libc.so.6
+00007ffff7f90000     16K r---- libc.so.6
+00007ffff7f94000      8K rw--- libc.so.6
+00007ffff7f96000     40K rw---   [ anon ]
+00007ffff7fc0000      8K r----   [ anon ]
+00007ffff7fc2000      8K r----   [ anon ]
+00007ffff7fc4000      8K r-x--   [ anon ]
+00007ffff7fc6000      4K r---- ld-linux-x86-64.so.2
+00007ffff7fc7000    164K r-x-- ld-linux-x86-64.so.2
+00007ffff7ff0000     44K r---- ld-linux-x86-64.so.2
+00007ffff7ffb000      8K r---- ld-linux-x86-64.so.2
+00007ffff7ffd000      8K rw--- ld-linux-x86-64.so.2
+00007ffffffde000    132K rw---   [ stack ] (argc,env(HOME),var_funlocal_main,var_funlocal_init_main, const_funlocal_init_main)
+ffffffffff600000      4K --x--   [ anon ]
+ total             6656K
