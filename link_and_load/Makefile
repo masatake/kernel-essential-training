@@ -1,6 +1,7 @@
-PROGS = pause pause2 vdso local getenv nop nop_with_fat_txt exit-asm exit-c
+PROGS = pause pause2 vdso local getenv nop nop_with_fat_txt exit-asm exit-c read-twice
 all: $(PROGS)
 
+read-twice: read-twice.o
 pause: pause.o
 pause2: pause2.o
 vdso: vdso.o
