@@ -23,4 +23,4 @@ exit-c: exit-c.o
 
 .PHONY: clean
 clean:
-	rm -f *.o $(PROGS)
+	rm -f *~ *.o $(PROGS)
