@@ -61,7 +61,7 @@ main()
                 error "unknown option: $1"
                 ;;
             *)
-                error "unexpecged argument: $1"
+                error "unexpected argument: $1"
                 ;;
         esac
     done
