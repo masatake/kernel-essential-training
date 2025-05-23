@@ -18,7 +18,7 @@ usage()
     echo
     echo "Options:"
     echo "  -h, --help: print usage"
-    echo "  -l, --language: language used in greeting (ja, fr, or [en])"
+    echo "  -l, --language: language used in greeting (ja, fr, de, or [en])"
     echo
     echo "Examples:"
     echo "   $0 --language ja"
@@ -61,12 +61,12 @@ main()
                 error "unknown option: $1"
                 ;;
             *)
-                error "unexpecged argument: $1"
+                error "unexpected argument: $1"
                 ;;
         esac
     done
 
-    if ! member "$lang" en ja fr; then
+    if ! member "$lang" en ja fr de; then
         warning "unknown language: $lang"
         warning "use \"en\" instead"
         lang=en
@@ -81,6 +81,9 @@ main()
             ;;
         fr)
             echo "Bonjour"
+            ;;
+        de)
+            echo "Guten Tag"
             ;;
     esac
 
