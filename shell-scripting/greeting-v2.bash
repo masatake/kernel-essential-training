@@ -73,6 +73,11 @@ greet_in_fr()
     echo "Bonjour"
 }
 
+greet_in_de()
+{
+    echo "Guten Tag"
+}
+
 main()
 {
     local lang="${DEFAULT_LANGUAGE}"
