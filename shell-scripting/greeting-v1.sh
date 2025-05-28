@@ -1,6 +1,6 @@
 #!/bin/sh
 
-readonly LANGUAGES="en ja fr"
+readonly LANGUAGES="en ja fr de"
 readonly DEFAULT_LANGUAGE=en
 
 error()
@@ -82,6 +82,11 @@ greet_in_ja()
 greet_in_fr()
 {
     echo "Bonjour"
+}
+
+greet_in_de()
+{
+    echo "Guten Tag"
 }
 
 main()
