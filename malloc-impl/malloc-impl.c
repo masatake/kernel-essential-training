@@ -58,7 +58,7 @@ main(void)
             err(1, "failed in malloc");
 
         if (y_or_n("free [y/n]: ")) {
-            fprintf(stderr, "free(%p\n", p);
+            fprintf(stderr, "free(%p)\n", p);
             free (p);
         }
     }
