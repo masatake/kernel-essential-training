@@ -15,7 +15,7 @@ main(void)
     fprintf(stderr, "PID: %d\n", getpid());
     prompt("open");
 
-    int fd = open("./TMP", O_WRONLY, 0666);
+    int fd = open("./TMP", O_RDWR, 0666);
 
     if (fd < 0)
         err(1, "failed in open (\"./TMP\",...)");
