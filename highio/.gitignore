@@ -1,0 +1,11 @@
+*.o
+*~
+TMP
+io0
+io1
+io2
+genfile
+*-via-read
+*-via-write
+*-via-stdio
+*-via-mmap

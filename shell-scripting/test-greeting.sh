@@ -69,4 +69,8 @@ test_start "--language fr"
 [ $("$TARGET" --language fr) = "Bonjour" ]
 test_end "$?"
 
+test_start "-l de"
+[ "$("$TARGET" -l de)" = "Guten Tag" ]
+test_end "$?"
+
 exit $STATUS
