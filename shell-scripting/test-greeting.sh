@@ -65,6 +65,10 @@ test_start "-l ja"
 [ $("$TARGET" -l ja) = "こんにちは" ]
 test_end "$?"
 
+test_start "--language fr"
+[ $("$TARGET" --language fr) = "Bonjour" ]
+test_end "$?"
+
 test_start "-l de"
 [ "$("$TARGET" -l de)" = "Guten Tag" ]
 test_end "$?"
