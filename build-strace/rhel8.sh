@@ -15,7 +15,7 @@ sudo dnf \
      builddep strace
 
 if ! [ -e rhel8-strace-kvm ]; then
-    git clone --branch=kvm-snapshot --single-branch http://github.com/masatake/strace rhel8-strace-kvm
+    git clone --branch=kvm-snapshot'#20250910' --single-branch http://github.com/masatake/strace rhel8-strace-kvm
 fi
 (
     cd rhel8-strace-kvm
