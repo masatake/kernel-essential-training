@@ -1,11 +1,11 @@
 set -xe
 
-sudo dnf install \
+sudo dnf -y install \
      --enablerepo=rhel-8-for-x86_64-baseos-rpms \
      --enablerepo=rhel-8-for-x86_64-appstream-rpms \
-     autoconf automake git
+     diffutils autoconf automake git
 
-sudo dnf \
+sudo dnf -y \
      --enablerepo=rhel-8-for-x86_64-baseos-rpms \
      --enablerepo=rhel-8-for-x86_64-appstream-rpms \
      --enablerepo=codeready-builder-for-rhel-8-x86_64-rpms \
@@ -15,13 +15,13 @@ sudo dnf \
      builddep strace
 
 if ! [ -e rhel8-strace-kvm ]; then
-    git clone --branch=kvm-snapshot'#20250910' --single-branch http://github.com/masatake/strace rhel8-strace-kvm
+    git clone --branch='kvm-snapshot#20251024-0'  --single-branch http://github.com/masatake/strace rhel8-strace-kvm
 fi
 (
     cd rhel8-strace-kvm
     bash ./bootstrap
     ./configure
     make
-    test -x ./strace
-    cp strace ../strace-rhel8
+    test -x ./src/strace
+    cp src/strace ../strace-rhel8
 )
