@@ -1,11 +1,13 @@
 set -xe
 
-sudo dnf -y install \
+SUDO=
+
+$SUDO dnf -y install \
      --enablerepo=rhel-8-for-x86_64-baseos-rpms \
      --enablerepo=rhel-8-for-x86_64-appstream-rpms \
      diffutils autoconf automake git
 
-sudo dnf -y \
+$SUDO dnf -y \
      --enablerepo=rhel-8-for-x86_64-baseos-rpms \
      --enablerepo=rhel-8-for-x86_64-appstream-rpms \
      --enablerepo=codeready-builder-for-rhel-8-x86_64-rpms \
