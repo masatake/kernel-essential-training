@@ -23,7 +23,7 @@ fi
     cd rhel8-strace-kvm
     bash ./bootstrap
     ./configure
-    make
+    make -j
     test -x ./src/strace
     cp src/strace ../strace-rhel8
 )
