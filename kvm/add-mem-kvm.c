@@ -40,17 +40,17 @@ int main(void)
 {
     int kvm, vmfd, vcpufd, ret;
     const uint8_t code[] = {
-	0xba, 0x00, 0x1a, /* mov $0x1a00, %dx */
-	0x67, 0x8a, 0x02, /* movb (%edx), %al */
-	0xba, 0x01, 0x1a, /* mov $0x1a01, %dx */
-	0x67, 0x8a, 0x1a, /* movb (%edx), %bl */
-	0xba, 0xf8, 0x03, /* mov $0x3f8, %dx */
-	0x00, 0xd8,       /* add %bl, %al */
-	0x04, '0',        /* add $'0', %al */
-	0xee,             /* out %al, (%dx) */
-	0xb0, '\n',       /* mov $'\n', %al */
-	0xee,             /* out %al, (%dx) */
-	0xf4,             /* hlt */
+    0xba, 0x00, 0x1a, /* mov $0x1a00, %dx */
+    0x67, 0x8a, 0x02, /* movb (%edx), %al */
+    0xba, 0x01, 0x1a, /* mov $0x1a01, %dx */
+    0x67, 0x8a, 0x1a, /* movb (%edx), %bl */
+    0xba, 0xf8, 0x03, /* mov $0x3f8, %dx */
+    0x00, 0xd8,       /* add %bl, %al */
+    0x04, '0',        /* add $'0', %al */
+    0xee,             /* out %al, (%dx) */
+    0xb0, '\n',       /* mov $'\n', %al */
+    0xee,             /* out %al, (%dx) */
+    0xf4,             /* hlt */
     };
     uint8_t *mem;
     struct kvm_sregs sregs;
@@ -59,74 +59,74 @@ int main(void)
 
     kvm = open("/dev/kvm", O_RDWR | O_CLOEXEC);
     if (kvm == -1)
-	err(1, "/dev/kvm");
+    err(1, "/dev/kvm");
 
     /* Make sure we have the stable version of the API */
     ret = ioctl(kvm, KVM_GET_API_VERSION, NULL);
     if (ret == -1)
-	err(1, "KVM_GET_API_VERSION");
+    err(1, "KVM_GET_API_VERSION");
     if (ret != 12)
-	errx(1, "KVM_GET_API_VERSION %d, expected 12", ret);
+    errx(1, "KVM_GET_API_VERSION %d, expected 12", ret);
 
     vmfd = ioctl(kvm, KVM_CREATE_VM, (unsigned long)0);
     if (vmfd == -1)
-	err(1, "KVM_CREATE_VM");
+    err(1, "KVM_CREATE_VM");
 
     /* Allocate one aligned page of guest memory to hold the code. */
     mem = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     if (!mem)
-	err(1, "allocating guest memory");
+    err(1, "allocating guest memory");
     memcpy(mem, code, sizeof(code));
     mem[0x0a00] = 4;
     mem[0x0a01] = 3;
 
     /* Map it to the second page frame (to avoid the real-mode IDT at 0). */
     struct kvm_userspace_memory_region region = {
-	.slot = 0,
-	.guest_phys_addr = 0x1000,
-	.memory_size = 0x1000,
-	.userspace_addr = (uint64_t)mem,
+    .slot = 0,
+    .guest_phys_addr = 0x1000,
+    .memory_size = 0x1000,
+    .userspace_addr = (uint64_t)mem,
     };
     ret = ioctl(vmfd, KVM_SET_USER_MEMORY_REGION, &region);
     if (ret == -1)
-	err(1, "KVM_SET_USER_MEMORY_REGION");
+    err(1, "KVM_SET_USER_MEMORY_REGION");
 
     vcpufd = ioctl(vmfd, KVM_CREATE_VCPU, (unsigned long)0);
     if (vcpufd == -1)
-	err(1, "KVM_CREATE_VCPU");
+    err(1, "KVM_CREATE_VCPU");
 
     /* Map the shared kvm_run structure and following data. */
     ret = ioctl(kvm, KVM_GET_VCPU_MMAP_SIZE, NULL);
     if (ret == -1)
-	err(1, "KVM_GET_VCPU_MMAP_SIZE");
+    err(1, "KVM_GET_VCPU_MMAP_SIZE");
     mmap_size = ret;
     if (mmap_size < sizeof(*run))
-	errx(1, "KVM_GET_VCPU_MMAP_SIZE unexpectedly small");
+    errx(1, "KVM_GET_VCPU_MMAP_SIZE unexpectedly small");
     run = mmap(NULL, mmap_size, PROT_READ | PROT_WRITE, MAP_SHARED, vcpufd, 0);
     if (!run)
-	err(1, "mmap vcpu");
+    err(1, "mmap vcpu");
 
     /* Initialize CS to point at 0, via a read-modify-write of sregs. */
     ret = ioctl(vcpufd, KVM_GET_SREGS, &sregs);
     if (ret == -1)
-	err(1, "KVM_GET_SREGS");
+    err(1, "KVM_GET_SREGS");
     sregs.cs.base = 0;
     sregs.cs.selector = 0;
     ret = ioctl(vcpufd, KVM_SET_SREGS, &sregs);
     if (ret == -1)
-	err(1, "KVM_SET_SREGS");
+    err(1, "KVM_SET_SREGS");
 
     /* Initialize registers: instruction pointer for our code, addends, and
      * initial flags required by x86 architecture. */
     struct kvm_regs regs = {
-	.rip = 0x1000,
-	.rax = 0,
-	.rbx = 0,
-	.rflags = 0x2,
+    .rip = 0x1000,
+    .rax = 0,
+    .rbx = 0,
+    .rflags = 0x2,
     };
     ret = ioctl(vcpufd, KVM_SET_REGS, &regs);
     if (ret == -1)
-	err(1, "KVM_SET_REGS");
+    err(1, "KVM_SET_REGS");
 
     {
         size_t n = 256;
@@ -140,26 +140,26 @@ int main(void)
     }
     /* Repeatedly run code and handle VM exits. */
     while (1) {
-	ret = ioctl(vcpufd, KVM_RUN, NULL);
-	if (ret == -1)
-	    err(1, "KVM_RUN");
-	switch (run->exit_reason) {
-	case KVM_EXIT_HLT:
-	    puts("KVM_EXIT_HLT");
-	    return 0;
-	case KVM_EXIT_IO:
-	    if (run->io.direction == KVM_EXIT_IO_OUT && run->io.size == 1 && run->io.port == 0x3f8 && run->io.count == 1)
-		putchar(*(((char *)run) + run->io.data_offset));
-	    else
-		errx(1, "unhandled KVM_EXIT_IO");
-	    break;
-	case KVM_EXIT_FAIL_ENTRY:
-	    errx(1, "KVM_EXIT_FAIL_ENTRY: hardware_entry_failure_reason = 0x%llx",
-		 (unsigned long long)run->fail_entry.hardware_entry_failure_reason);
-	case KVM_EXIT_INTERNAL_ERROR:
-	    errx(1, "KVM_EXIT_INTERNAL_ERROR: suberror = 0x%x", run->internal.suberror);
-	default:
-	    errx(1, "exit_reason = 0x%x", run->exit_reason);
-	}
+    ret = ioctl(vcpufd, KVM_RUN, NULL);
+    if (ret == -1)
+        err(1, "KVM_RUN");
+    switch (run->exit_reason) {
+    case KVM_EXIT_HLT:
+        puts("KVM_EXIT_HLT");
+        return 0;
+    case KVM_EXIT_IO:
+        if (run->io.direction == KVM_EXIT_IO_OUT && run->io.size == 1 && run->io.port == 0x3f8 && run->io.count == 1)
+        putchar(*(((char *)run) + run->io.data_offset));
+        else
+        errx(1, "unhandled KVM_EXIT_IO");
+        break;
+    case KVM_EXIT_FAIL_ENTRY:
+        errx(1, "KVM_EXIT_FAIL_ENTRY: hardware_entry_failure_reason = 0x%llx",
+         (unsigned long long)run->fail_entry.hardware_entry_failure_reason);
+    case KVM_EXIT_INTERNAL_ERROR:
+        errx(1, "KVM_EXIT_INTERNAL_ERROR: suberror = 0x%x", run->internal.suberror);
+    default:
+        errx(1, "exit_reason = 0x%x", run->exit_reason);
+    }
     }
 }
