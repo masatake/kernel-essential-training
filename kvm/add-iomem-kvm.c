@@ -74,7 +74,7 @@ int main(void)
 
     /* Allocate one aligned page of guest memory to hold the code. */
     mem = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    if (!mem)
+    if (mem == MAP_FAILED)
     err(1, "allocating guest memory");
     memcpy(mem, code, sizeof(code));
 
@@ -101,7 +101,7 @@ int main(void)
     if (mmap_size < sizeof(*run))
     errx(1, "KVM_GET_VCPU_MMAP_SIZE unexpectedly small");
     run = mmap(NULL, mmap_size, PROT_READ | PROT_WRITE, MAP_SHARED, vcpufd, 0);
-    if (!run)
+    if (run == MAP_FAILED)
     err(1, "mmap vcpu");
 
     /* Initialize CS to point at 0, via a read-modify-write of sregs. */

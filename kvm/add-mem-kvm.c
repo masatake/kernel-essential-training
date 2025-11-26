@@ -74,7 +74,7 @@ int main(void)
 
     /* Allocate one aligned page of guest memory to hold the code. */
     mem = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    if (!mem)
+    if (mem == MAP_FAILED)
     err(1, "allocating guest memory");
     memcpy(mem, code, sizeof(code));
     mem[0x0a00] = 4;
