@@ -1,0 +1,5 @@
+[*.{c,h,sh}]
+indent_size = 2
+indent_style = space
+trim_trailing_whitespace = true
+tab_width = 2

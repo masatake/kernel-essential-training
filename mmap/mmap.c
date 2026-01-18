@@ -48,7 +48,7 @@ usage(const char *prog, FILE *fp)
   fputs("Usage:\n", fp);
   fprintf(fp, "%s [--quiet] [(--length|-l) LENGTH] [(--protection|-p) PROTECTION] [(--file|-f) FILE]\\\n", prog);
   fprintf(fp, "%*s [(--hugepage|-H) HPSIZE] [(--megabyte|-m)|(--gigabyte|-g)]\\\n",
-	  (int)strlen(prog), "");
+          (int)strlen(prog), "");
   fprintf(fp, "%*s [--thread|--fork] [(-t|--touch) TOUCH]\n\n", (int)strlen(prog), "");
   fputs("	LENGTH: the length of mapping area in GiB or MiB (with -m option) [default: 1GiB]\n", fp);
   fputs("	PERSMISION: 4 charters [r|-][w|-][x|-][p|s] [default: r--s]\n", fp);
@@ -57,9 +57,9 @@ usage(const char *prog, FILE *fp)
   fputs("	TOUCH: how frequently writing to the pages when w is in PERSMISION:\n", fp);
   fputs("	       \"infinite\", \"once\", \"dontneed\", "
 #ifdef MADV_PAGEOUT
-	"\"pageout\", "
+        "\"pageout\", "
 #endif
-	"or \"never\". [default: infinite]\n", fp);
+        "or \"never\". [default: infinite]\n", fp);
   fputs("Examples:\n", fp);
   fputs("	# anonymouos private mapping, reading the area\n", fp);
   fprintf(fp, "	%s --length 1 --protection r--p\n", prog);
@@ -100,12 +100,12 @@ decode_protection(const char *str)
     prot |= PROT_READ;
   else if (str[0] == '\0')
     error (1, 0,
-	   "Too short (< 4) protection string: %lu\n",
-	   strlen (str));
+           "Too short (< 4) protection string: %lu\n",
+           strlen (str));
   else
     error (1, 0,
-	   "Unexpected char in read field of protection string: %c\n",
-	   str[0]);
+           "Unexpected char in read field of protection string: %c\n",
+           str[0]);
 
   if (str[1] == '-')
     ;
@@ -113,12 +113,12 @@ decode_protection(const char *str)
     prot |= PROT_WRITE;
   else if (str[1] == '\0')
     error (1, 0,
-	   "Too short (< 4) protection string: %lu\n",
-	   strlen (str));
+           "Too short (< 4) protection string: %lu\n",
+           strlen (str));
   else
     error (1, 0,
-	   "Unexpected char in write field of protection string: %c\n",
-	   str[1]);
+           "Unexpected char in write field of protection string: %c\n",
+           str[1]);
 
   if (str[2] == '-')
     ;
@@ -126,12 +126,12 @@ decode_protection(const char *str)
     prot |= PROT_EXEC;
   else if (str[2] == '\0')
     error (1, 0,
-	   "Too short (< 4) protection string: %lu\n",
-	   strlen (str));
+           "Too short (< 4) protection string: %lu\n",
+           strlen (str));
   else
     error (1, 0,
-	   "Unexpected char in exec field of protection string: %c\n",
-	   str[2]);
+           "Unexpected char in exec field of protection string: %c\n",
+           str[2]);
 
   return prot;
 }
@@ -143,8 +143,8 @@ decode_mflag(const char *str)
 
   if (! (str[0] != '\0' && str[1] != '\0' && str[2] != '\0'))
     error (1, 0,
-	   "Too short (< 4) protection string: %lu\n",
-	   strlen (str));
+           "Too short (< 4) protection string: %lu\n",
+           strlen (str));
 
   if (str[3] == 's')
     mflags |= MAP_SHARED;
@@ -152,8 +152,8 @@ decode_mflag(const char *str)
     mflags |= MAP_PRIVATE;
   else
     error (1, 0,
-	   "Unexpected char in share/priviate field of protection string: %c\n",
-	   str[3]);
+           "Unexpected char in share/priviate field of protection string: %c\n",
+           str[3]);
 
   return mflags;
 }
@@ -182,21 +182,21 @@ openFor (const char *file, int flags)
   int fd = open (file, flags);
   if (fd == -1)
     error (1, -1,
-	   "failed to open \"%s\"\n", file);
+           "failed to open \"%s\"\n", file);
 
   return fd;
 }
 
 enum touch_action
-{
-  TOUCH_INFINITE,
-  TOUCH_ONCE,
-  TOUCH_NEVER,
-  TOUCH_DONTNEED,
+  {
+    TOUCH_INFINITE,
+    TOUCH_ONCE,
+    TOUCH_NEVER,
+    TOUCH_DONTNEED,
 #ifdef MADV_PAGEOUT
-  TOUCH_PAGEOUT,
+    TOUCH_PAGEOUT,
 #endif
-};
+  };
 
 struct runData {
   char *addr;
@@ -214,9 +214,9 @@ run (char *addr, int prot, size_t length, unsigned int stride)
     {
       char *p = addr + (i * stride);
       if (prot & PROT_WRITE)
-	*p = '1';
+        *p = '1';
       else
-	c += *p;
+        c += *p;
     }
   return c;
 }
@@ -229,26 +229,26 @@ thread_run (void * arg)
   while (1)
     {
       if (data->action == TOUCH_NEVER)
-	continue;
+        continue;
       else if ((data->action == TOUCH_ONCE
-		|| data->action == TOUCH_DONTNEED
+                || data->action == TOUCH_DONTNEED
 #ifdef MADV_PAGEOUT
-		|| data->action == TOUCH_PAGEOUT
+                || data->action == TOUCH_PAGEOUT
 #endif
-		)
-	       && touched)
-	continue;
+                )
+               && touched)
+        continue;
 
       run (data->addr, data->prot, data->length, data->stride);
       touched = true;
 
       if (data->action == TOUCH_DONTNEED)
-	if (madvise(data->addr, data->length, MADV_DONTNEED) < 0)
-	  error (1, errno, "Failed in madvise\n");
+        if (madvise(data->addr, data->length, MADV_DONTNEED) < 0)
+          error (1, errno, "Failed in madvise\n");
 #ifdef MADV_PAGEOUT
-	    if (data->action == TOUCH_PAGEOUT)
-	if (madvise(data->addr, data->length, MADV_PAGEOUT) < 0)
-	  error (1, errno, "Failed in madvise\n");
+      if (data->action == TOUCH_PAGEOUT)
+        if (madvise(data->addr, data->length, MADV_PAGEOUT) < 0)
+          error (1, errno, "Failed in madvise\n");
 #endif
     }
   return NULL;
@@ -259,20 +259,20 @@ main (int argc, char **argv)
 {
   static struct option long_options[] =
     {
-     {"file",       required_argument, NULL, 'f'},
-     {"length",     required_argument, NULL, 'l'},
-     {"protection", required_argument, NULL, 'p'},
-     {"touch",      required_argument, NULL, 't'},
+      {"file",       required_argument, NULL, 'f'},
+      {"length",     required_argument, NULL, 'l'},
+      {"protection", required_argument, NULL, 'p'},
+      {"touch",      required_argument, NULL, 't'},
 
-     {"help",       no_argument,       NULL, 'h'},
-     {"verbose",    no_argument,       NULL, 'v'},
-     {"fork",       no_argument,       NULL, 'F'},
-     {"thread",     no_argument,       NULL, 'T'},
-     {"hugepage",   optional_argument, NULL, 'H'},
-     {"megabyte",   no_argument,       NULL, 'm'},
-     {"gigabyte",   no_argument,       NULL, 'g'},
+      {"help",       no_argument,       NULL, 'h'},
+      {"verbose",    no_argument,       NULL, 'v'},
+      {"fork",       no_argument,       NULL, 'F'},
+      {"thread",     no_argument,       NULL, 'T'},
+      {"hugepage",   optional_argument, NULL, 'H'},
+      {"megabyte",   no_argument,       NULL, 'm'},
+      {"gigabyte",   no_argument,       NULL, 'g'},
 
-     {"quiet",      no_argument,       NULL, 'q'},
+      {"quiet",      no_argument,       NULL, 'q'},
     };
 
   size_t length = 1 * GB;
@@ -291,84 +291,84 @@ main (int argc, char **argv)
     {
       int option_index = 0;
       int c = getopt_long (argc, argv, "f:l:p:hvFTH::qmgt:",
-			   long_options, &option_index);
+                           long_options, &option_index);
 
       if (c == -1)
-	break;
+        break;
 
       switch (c)
-	{
-	case 'h':
-	  usage (argv[0], stdout);
-	  return 0;
-	case 'l':
-	  errno = 0;
-	  length = strtoul (optarg, NULL, 10) * unit;
-	  if (errno != 0)
-	    error (1, errno,
-		   "Failed to convert \"%s\" to integer\n", optarg);
-	  break;
-	case 'v':
-	  verbose = true;
-	  break;
-	case 'p':
-	  prot   = decode_protection (optarg);
-	  mflags = decode_mflag(optarg);
-	  break;
-	case 'f':
-	  file = optarg;
-	  if (strcmp (file, "/dev/zero") == 0)
-	    file = NULL;
-	  break;
-	case 'F':
-	  do_fork = true;
-	  break;
-	case 'T':
-	  make_thread = true;
-	  break;
-	case '?':
-	  error (1, 0,
-		 "Unknown option: %s\n", argv[optind]);
-	  break;
-	case 'q':
-	  quiet = true;
-	  break;
-	case 'H':
-      if (optarg)
         {
-          if (strcmp (hugepage, "default"))
-            error (1, 0,
-                   "Unknown hugepage size: %s\n", hugepage);
-        }
-      else
-        hugepage = "default";
-	  break;
-	case 'm':
-	  unit = MB;
-	  length = length / 1024;
-	  break;
-	case 'g':
-	  if (unit == MB)
-	    error (1, 0, "Specify either -g or -m");
-	  unit = GB;
-	  break;
-	case 't':
-	  if (strcmp (optarg, "infinite") == 0)
-	    action = TOUCH_INFINITE;
-	  else if (strcmp (optarg, "once") == 0)
-	    action = TOUCH_ONCE;
-	  else if (strcmp (optarg, "never") == 0)
-	    action = TOUCH_NEVER;
-	  else if (strcmp (optarg, "dontneed") == 0)
-	    action = TOUCH_DONTNEED;
+        case 'h':
+          usage (argv[0], stdout);
+          return 0;
+        case 'l':
+          errno = 0;
+          length = strtoul (optarg, NULL, 10) * unit;
+          if (errno != 0)
+            error (1, errno,
+                   "Failed to convert \"%s\" to integer\n", optarg);
+          break;
+        case 'v':
+          verbose = true;
+          break;
+        case 'p':
+          prot   = decode_protection (optarg);
+          mflags = decode_mflag(optarg);
+          break;
+        case 'f':
+          file = optarg;
+          if (strcmp (file, "/dev/zero") == 0)
+            file = NULL;
+          break;
+        case 'F':
+          do_fork = true;
+          break;
+        case 'T':
+          make_thread = true;
+          break;
+        case '?':
+          error (1, 0,
+                 "Unknown option: %s\n", argv[optind]);
+          break;
+        case 'q':
+          quiet = true;
+          break;
+        case 'H':
+          if (optarg)
+            {
+              if (strcmp (hugepage, "default"))
+                error (1, 0,
+                       "Unknown hugepage size: %s\n", hugepage);
+            }
+          else
+            hugepage = "default";
+          break;
+        case 'm':
+          unit = MB;
+          length = length / 1024;
+          break;
+        case 'g':
+          if (unit == MB)
+            error (1, 0, "Specify either -g or -m");
+          unit = GB;
+          break;
+        case 't':
+          if (strcmp (optarg, "infinite") == 0)
+            action = TOUCH_INFINITE;
+          else if (strcmp (optarg, "once") == 0)
+            action = TOUCH_ONCE;
+          else if (strcmp (optarg, "never") == 0)
+            action = TOUCH_NEVER;
+          else if (strcmp (optarg, "dontneed") == 0)
+            action = TOUCH_DONTNEED;
 #ifdef MADV_PAGEOUT
-	  else if (strcmp (optarg, "pageout") == 0)
-	    action = TOUCH_PAGEOUT;
+          else if (strcmp (optarg, "pageout") == 0)
+            action = TOUCH_PAGEOUT;
 #endif
-	  else
-	    error (1, 0, "Unknown action: %s", optarg);
-	  break;
-	}
+          else
+            error (1, 0, "Unknown action: %s", optarg);
+          break;
+        }
     }
 
   int fflags  = prot2fflags(prot);
@@ -391,15 +391,15 @@ main (int argc, char **argv)
   char *addr = mmap (NULL, length, prot, mflags, fd, 0);
   if (addr == MAP_FAILED)
     error (1, errno,
-	   "Failed in mmap\n");
+           "Failed in mmap\n");
 
   struct runData d =
     {
-     .addr = addr,
-     .prot = prot,
-     .length = length,
-     .stride = getpagesize(),
-     .action = action,
+      .addr = addr,
+      .prot = prot,
+      .length = length,
+      .stride = getpagesize(),
+      .action = action,
     };
 
   if (!quiet)
@@ -414,9 +414,9 @@ main (int argc, char **argv)
     {
       pid_t t = fork ();
       if (t < 0)
-	error (1, errno, "Failed in fork");
+        error (1, errno, "Failed in fork");
       else if (t == 0)
-	thread_run (&d);
+        thread_run (&d);
       pause ();
     }
   else if (make_thread)
@@ -424,7 +424,7 @@ main (int argc, char **argv)
       pthread_t thr;
       int e = pthread_create (&thr, NULL, thread_run, &d);
       if (errno != 0)
-	error (1, e, "Failed in pthread_create");
+        error (1, e, "Failed in pthread_create");
       pause ();
     }
   else
