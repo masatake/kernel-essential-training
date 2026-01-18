@@ -268,7 +268,7 @@ main (int argc, char **argv)
      {"verbose",    no_argument,       NULL, 'v'},
      {"fork",       no_argument,       NULL, 'F'},
      {"thread",     no_argument,       NULL, 'T'},
-     {"hugepage",   no_argument,       NULL, 'H'},
+     {"hugepage",   optional_argument, NULL, 'H'},
      {"megabyte",   no_argument,       NULL, 'm'},
      {"gigabyte",   no_argument,       NULL, 'g'},
 
@@ -290,7 +290,7 @@ main (int argc, char **argv)
   while (1)
     {
       int option_index = 0;
-      int c = getopt_long (argc, argv, "f:l:p:hvFTH:qmgt:",
+      int c = getopt_long (argc, argv, "f:l:p:hvFTH::qmgt:",
 			   long_options, &option_index);
 
       if (c == -1)
@@ -334,10 +334,14 @@ main (int argc, char **argv)
 	  quiet = true;
 	  break;
 	case 'H':
-	  hugepage = optarg;
-	  if (strcmp (hugepage, "default"))
-	    error (1, 0,
-		   "Unknown hugepage size: %s\n", hugepage);
+      if (optarg)
+        {
+          if (strcmp (hugepage, "default"))
+            error (1, 0,
+                   "Unknown hugepage size: %s\n", hugepage);
+        }
+      else
+        hugepage = "default";
 	  break;
 	case 'm':
 	  unit = MB;
