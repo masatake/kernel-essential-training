@@ -60,7 +60,7 @@ struct action {
      do_write, O_WRONLY|O_CREAT|O_EXCL,          0},
     {"create+dontcache", "create a file with 1G data (RWF_DONTCACHE)",
      do_write,  O_WRONLY|O_CREAT|O_EXCL,         RWF_DONTCACHE},
-    {"create+diect",     "create a file with 1G data (directly)",
+    {"create+direct",    "create a file with 1G data (directly)",
      do_write, O_WRONLY|O_CREAT|O_EXCL|O_DIRECT, 0},
     {"write+cache",      "write 1G data to the exiting file (to cache)",
      do_write, O_WRONLY,                         0},
