@@ -390,8 +390,14 @@ main (int argc, char **argv)
 
   char *addr = mmap (NULL, length, prot, mflags, fd, 0);
   if (addr == MAP_FAILED)
-    error (1, errno,
-           "Failed in mmap\n");
+    {
+      if ((mflags & MAP_HUGETLB) && (errno == ENOMEM))
+        error (0, 0,
+               "hint: you must reserve memory area via "
+               "/proc/sys/vm/nr_hugepages to use hugetlb.");
+      error (1, errno,
+             "Failed in mmap");
+    }
 
   struct runData d =
     {
